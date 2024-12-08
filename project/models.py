@@ -1,32 +1,25 @@
 import sqlalchemy as sq
-from project.apps import bcrypt
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from project.apps import app_
 from project.models_more.model_init import Base
+from project.models_more.model_transaction import Transaction
+from project.models_more.model_user import Users
+from project.models_more.postcresbase import create_database_if_not_exsists
+from dotenv_ import (SETTING_POSTGRES_DB,
+                     SETTING_POSTGRES_HOST,
+                     SETTING_POSTGRES_PORT)
+# Create DB
+create_database_if_not_exsists(f"{SETTING_POSTGRES_DB}")
+# Create on ENGINE
+engine = create_engine()
+Base.metadata.create_all(bind=engine)
+Session = sessionmaker(bind=engine)
 
-class Users(Base):
-    """This is a model Users of table in db"""
-    __tablename__ = "users"
-    
-    id = sq.Column(sq.Integer, primary_key=True)
-    balance = sq.Column(sq.Float, nullable=False)
-    commision_rate = sq.Column(sq.Float, nullable=False)
-    webhook_url = sq.Column(sq.String(255), nullable=False)
-    wallet_address = sq.Column(sq.String(255), unique=True)
-    
-    def __str__(self):
-        return f"Index: {self.id}, Balance: {self.balance}, Commissiom:\
-{self.commision_rate}"
-
-class Transaction(Base):
-    __tablename__ = "transaction"
-    
-    id = sq.Column(sq.Integer, primary_key=True)
-    amount = sq.Column(sq.Float, nullable=False)
-    commission = sq.Column(sq.Float, nullable=False)
-    # "ожидание", "подтверждена", "отменена", "истекла"
-    status = sq.Column(sq.String(28), nullable=False)
-    
-    def __str__(self):
-        return f" Index: {self.id}, Commission: {self.commission} Status: \
-{self.status}"
-
+def get_session():
+    """Receive the session"""
+    return Session()
+# DATABASE_URL = f"{SETTING_POSTGRES_HOST}:{SETTING_POSTGRES_PORT}"
+# DNS: str = app_.config["SQLALCHEMY_DATABASE_URI"]
+# engine = sq.create_engine(DNS, pool_pre_ping=True)
 
