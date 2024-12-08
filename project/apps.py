@@ -1,5 +1,4 @@
 from flask import Flask
-
 from flask_bcrypt import Bcrypt
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
@@ -7,7 +6,7 @@ from flask_wtf.csrf import CSRFProtect
 from werkzeug.routing import BaseConverter
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from models import (sq, Users, Transaction)
+from models import (Users, Transaction, get_session)
 from dotenv_ import (EMAIL_HOST, EMAIL_PORT, MAIL_DEFAULT_SENDER, MAIL_PASSWORD,
                      MAIL_USE_TLS, MAIL_USERNAME, SECRET_KEY,
                      SETTING_POSTGRES_DB,
@@ -63,6 +62,8 @@ bcrypt = flask_dict["bcrypt"]
 login_manager = flask_dict["login_manager"]
 app_type = type(app_)
 
-
-admin = Admin(app_)
-admin.add_view(ModelView(Users, sq))
+# Admin
+admin = Admin(app_, name="transactions_of_user")
+session = get_session()
+admin.add_view(ModelView(Users, session))
+admin.add_view(ModelView(Transaction, session))
