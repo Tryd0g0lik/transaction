@@ -10,7 +10,7 @@ from project.models_more.model_user import Users
 from project.models_more.model_transaction import Transaction
 from project.models_more.model_user_transactions import User_Transaction
 from project.models import get_session
-from project.commands import create_admin as usersbp
+# from project.commands import create_admin as usersbp
 from dotenv_ import (SECRET_KEY, DSN)
 class RegexConverter(BaseConverter):
     def __init__(self, url_map, regex):
@@ -56,7 +56,7 @@ bcrypt = flask_dict["bcrypt"]
 login_manager = flask_dict["login_manager"]
 app_type = type(app_)
 # USER command
-app_.register_blueprint(usersbp)
+# app_.register_blueprint(usersbp)
 # Admin
 admin = Admin(app_, name="transactions_of_user")
 session = get_session()
@@ -64,3 +64,28 @@ admin.add_view(ModelView(Users, session))
 admin.add_view(ModelView(Transaction, session))
 admin.add_view(ModelView(User_Transaction, session))
 
+
+@app_.cli.command("create-users")
+def create_admin():
+    """
+    TODO: COmmand for a create the user
+    :return:
+    """
+    # from project.apps import get_session
+    from project.models_more.model_user import Users
+    session = get_session()
+    try:
+        admin_user = Users(
+            balance=0.0,
+            commission_rate=0.05,
+            webhook_url='http://example.com/webhook',
+            wallet_address='test_wallet'
+        )
+        session.add(admin_user)
+        session.commit()
+        print("Admin user created.")
+    except Exception as e:
+        
+        print(f"Admin user not created. Mistake => {e.__str__()}")
+    finally:
+        session.close()

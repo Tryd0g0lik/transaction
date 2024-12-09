@@ -8,10 +8,10 @@ class Users(Base):
     
     id = sq.Column(sq.Integer, primary_key=True)
     balance = sq.Column(sq.Float, nullable=False)
-    commision_rate = sq.Column(sq.Float, nullable=False)
+    commission_rate = sq.Column(sq.Float, nullable=False)
     webhook_url = sq.Column(sq.String(255), nullable=False)
     wallet_address = sq.Column(sq.String(255), unique=True)
     
     def __str__(self):
         return f"Index: {self.id}, Balance: {self.balance}, Commissiom:\
-{self.commision_rate}"
+{self.commission_rate}"
