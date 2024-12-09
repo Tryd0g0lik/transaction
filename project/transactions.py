@@ -2,7 +2,7 @@
 Here is a logic for work with db.
 This is a management for control the transaction
 """
-from flask import jsonify
+from typing import (Dict, Any)
 from project.models import get_session
 from project.models_more.model_transaction import Transaction
 from project.models_more.model_user import Users
@@ -49,13 +49,32 @@ class Bank:
                 self.session.commit()
                 status = True
         except Exception as e:
-            print(f"[Bank]: 'add' Error => {e}")
+            print(f"[Bank]: 'cancels' Error => {e}")
         finally:
             return status
     
+    def check(self, transaction_id: int) -> Dict[str, Any]:
+        status = {"status": ""}
+        try:
+            transaction =\
+                self.session(Transaction).query.filter_by(transaction_id).first()
+            if transaction:
+                status["status"] =\
+                    status["status"].join(str(transaction.status))
+            else:
+                pass
+        except Exception as e:
+            print(f"[Bank]: 'check' Error => {e}")
+        finally:
+            return status
+        
     def get_transaction(self):
+        """
+        TODO: Receive the transaction object after add a new transaction.
+        :return: object
+        """
         return self._transaction
-
+    
     def close(self):
         """Close the session"""
         try:

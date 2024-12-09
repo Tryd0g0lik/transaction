@@ -11,7 +11,7 @@ celery = Celery(app.name, broker='redis://localhost:6379/0')
 @app.router("/api/v1/create_transaction", methods=["POST"])
 def create_transaction() -> Response:
     """
-    TODO: THis is logic for a interface of add the new transaction.
+    TODO: THis is logic for interface of add the new transaction.
         It's works at target through an API key
     :return: str or bool
     """
@@ -55,7 +55,7 @@ def create_transaction() -> Response:
 @app.route("/api/v1/cancel_transaction", methods=["POST"])
 def cancel_transaction() -> Response:
     """
-       TODO: THis is logic for a interface for cansel the transaction.
+       TODO: THis is logic for interface for cansel the transaction.
            It's works at target through an API key
        :return: str or bool
        """
@@ -97,3 +97,40 @@ def cancel_transaction() -> Response:
         bank.close()
         return result_json
     
+@app.router("/api/v1/check_transaction/<int:transaktion_id>", methods=["GET"])
+def check_transaction(transaction_id):
+    """
+    TODO: THis is logic for interface for check the transaction.
+        It's works at target through an API key
+    :return: str or bool
+    """
+    status_text = "None"
+    result_json = jsonify({"message": "", "status": ""})
+    if not transaction_id or (type(transaction_id) != str
+                              and type(transaction_id) != int):
+        status_text = status_text.replace(
+            "None",
+            "[check_transaction]: Not found the 'transaction''.\
+ Need check this."
+        )
+        print(status_text)
+        result_json = jsonify({"message": "Transaction was created", })
+        return result_json
+    bank = Bank()
+    try:
+        resp_dic = bank.check(int(transaction_id))
+        result_json = jsonify({"message": "", "status": resp_dic["status"]})
+    except Exception as e:
+        status_text = status_text.replace(
+            "None",
+            f"[check_transaction]: Something what wrong!"
+        )
+        result_json = jsonify({"message": "Something what wrong!",
+                               "status": ""})
+    finally:
+        print(status_text)
+        flash(status_text)
+        bank.close()
+        return result_json
+    
+        
