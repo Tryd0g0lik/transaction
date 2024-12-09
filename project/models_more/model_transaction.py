@@ -1,4 +1,5 @@
 import sqlalchemy as sq
+
 from project.apps import bcrypt
 from project.models_more.model_init import Base
 

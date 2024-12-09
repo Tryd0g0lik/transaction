@@ -15,13 +15,13 @@ class Bank:
         self.session = get_session()
         self._transaction = None
     
-    def add_transaction(self, user_id, amount) -> bool:
+    def add(self, user_id: int, amount: float) -> bool:
         status = False
         try:
             # Receives the user and calculates the commission
-            user = self.session(Users).query.filter_by(id=int(user_id)).first()
+            user = self.session(Users).query.filter_by(id=user_id).first()
             if user:
-                commission = int(amount) * user.commission_rate
+                commission = amount * user.commission_rate
                 new_transaction = Transaction(
                     amount=amount,
                     commission=commission,
@@ -29,15 +29,27 @@ class Bank:
                 )
                 self.session.add(new_transaction)
                 self.session.commit()
-                # return jsonify(
-                #     {"message": "Transaction was created",
-                #      "transaction_id": new_transaction.id}
-                #     )
                 self._transaction = new_transaction.id
-            print(f"[Bank]: 'add_transaction' New transaction was added, now ")
+            print(f"[Bank]: 'add' New transaction was added, now ")
             status = True
+            
         except Exception as e:
-            print(f"[Bank]: 'add_transaction' Error => {e}")
+            print(f"[Bank]: 'add' Error => {e}")
+        finally:
+            return status
+    
+    def cancels(self, transaction_id: int) -> bool:
+        status = None
+        try:
+            old_transaction = self.session(Transaction).query\
+                .filter_by(transaction_id).first()
+            if old_transaction and old_transaction == "ожидание":
+                old_transaction.status = \
+                    old_transaction.status.replace("ожидание", "отменена")
+                self.session.commit()
+                status = True
+        except Exception as e:
+            print(f"[Bank]: 'add' Error => {e}")
         finally:
             return status
     
