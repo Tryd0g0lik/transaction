@@ -1,16 +1,15 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_bcrypt import Bcrypt
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.routing import BaseConverter
-from flask_admin import Admin
+from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
 from project.models_more.model_user import Users
 from project.models_more.model_transaction import Transaction
 from project.models_more.model_user_transactions import User_Transaction
 from project.models import get_session
-# from project.commands import create_admin as usersbp
 from dotenv_ import (SECRET_KEY, DSN)
 class RegexConverter(BaseConverter):
     def __init__(self, url_map, regex):
@@ -55,10 +54,15 @@ csrf = flask_dict["csrf"]
 bcrypt = flask_dict["bcrypt"]
 login_manager = flask_dict["login_manager"]
 app_type = type(app_)
-# USER command
-# app_.register_blueprint(usersbp)
+
 # Admin
-admin = Admin(app_, name="transactions_of_user")
+class MyHomeView(AdminIndexView):
+    @expose('/')
+    def index(self):
+        arg1 = 'Hello'
+        # return self.render('imdex.html', arg1=arg1)
+        return render_template("imdex.html")
+admin = Admin(app_, name="admin", index_view=MyHomeView())
 session = get_session()
 admin.add_view(ModelView(Users, session))
 admin.add_view(ModelView(Transaction, session))
