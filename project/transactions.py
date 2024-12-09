@@ -7,6 +7,8 @@ from typing import (Dict, Any)
 from project.models import get_session
 from project.models_more.model_transaction import Transaction
 from project.models_more.model_user import Users
+from project.models_more.model_user_transactions import User_Transaction
+
 
 class Bank:
     """
@@ -23,12 +25,20 @@ class Bank:
             user = self.session(Users).query.filter_by(id=user_id).first()
             if user:
                 commission = amount * user.commission_rate
+                # Transaction
                 new_transaction = Transaction(
                     amount=amount,
                     commission=commission,
                     status="ожидание"
                 )
                 self.session.add(new_transaction)
+                self.session.commit()
+                user_transaction = User_Transaction(
+                    user_id=user.id,
+                    trasaction_id=new_transaction,
+                )
+                # User_Transaction average
+                self.session.add(user_transaction)
                 self.session.commit()
                 self._transaction = new_transaction.id
             print(f"[Bank]: 'add' New transaction was added, now ")
@@ -77,6 +87,7 @@ class Bank:
                 self.session(Transaction).query.filter_by(
                     status='ожидание'
                     ).all()
+            transaction_all = Transaction.query.all()
             # !!!!--- 99999 ---!!!!! Need table between Users and Transaction
             # Ned property the 'created_at' for a transaction
             
