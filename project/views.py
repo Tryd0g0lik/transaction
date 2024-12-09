@@ -1,4 +1,5 @@
 from flask import (request, jsonify, flash, Response)
+from flask.cli import with_appcontext
 from typing import (Dict, Any)
 from celery import Celery
 
@@ -163,4 +164,28 @@ def check_pending_transaction() -> [bool]:
        
     finally:
         bank.close()
+
+@app.cli.command("create-admine")
+@with_appcontext
+def create_admin():
+    """
+    TODO: COmmand for a create the user
+    :return:
+    """
+    from project.apps import get_session
+    from project.models_more.model_user import Users
+    session = get_session()
+    try:
+        admin_user = Users(
+            balance=0.0,
+            commission_rate=0.05,
+            webhook_url='http://example.com/webhook', wallet_address='test_wallet'
+        )
+        session.add(admin_user)
+        session.commit()
+        print("Admin user created.")
+    except Exception as e:
         
+        print(f"Admin user not created. Mistake => {e.__str__()}")
+    finally:
+        session.close()
