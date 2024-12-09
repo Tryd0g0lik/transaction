@@ -1,7 +1,7 @@
 """Here data imports from the file '.env' of django project"""
 
 import os
-
+from pathlib import Path
 import dotenv
 
 dotenv.load_dotenv()
@@ -35,3 +35,8 @@ PORT_TO_BACKEND = os.getenv("PORT_TO_BACKEND", "")
 PROTOCOL_TO_BACKEND = os.getenv(
     "PROTOCOL_TO_BACKEND", ""
 )
+DSN = f"postgresql://{SETTING_POSTGRES_USER}:\
+{SETTING_POSTGRES_PASSWORD}@\
+{SETTING_POSTGRES_HOST}:\
+{SETTING_POSTGRES_PORT}/\
+{SETTING_POSTGRES_DB}"

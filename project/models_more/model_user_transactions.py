@@ -26,7 +26,7 @@ class User_Transaction(Base):
     )
     trasaction_id = sq.Column(sq.Integer, sq.ForeignKey("transaction.id"),
                               nullable=False)
-    datetime = sq.Column(sq.Column(sq.DateTime, default=datetime.utcnow))
+    datetime = sq.Column(sq.DateTime, default=datetime.utcnow)
     users = relationship("Users", backref="users")
     transaction = relationship("Transaction", backref="transactions",
                                uselist=False)

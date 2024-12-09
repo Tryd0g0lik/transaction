@@ -35,7 +35,7 @@ def create_database_if_not_exsists(db_name: str) -> bool:
     exists = cursor.fetchone()
     
     # STATUS TEXT
-    status_text = None
+    status_text = "None"
     status = False
     if not exists:
         sql_text = f"CREATE DATABASE {db_name};"
