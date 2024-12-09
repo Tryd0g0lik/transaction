@@ -45,8 +45,8 @@ def create_transaction() -> Response:
     except Exception as e:
         status_text = status_text.replace(
             "None",
-            f"[create_transaction]: Something what wrong!")
-        result_json = jsonify({"message": "Something what wrong"})
+            f"Error => {e.__str__()}")
+        result_json = jsonify({"message": f"Error => {e.__str__()}"})
     finally:
         print(status_text)
         bank.close()
@@ -88,9 +88,9 @@ def cancel_transaction() -> Response:
     except Exception as e:
         status_text = status_text.replace(
             "None",
-            f"[create_transaction]: Something what wrong!"
+            f"Error => {e.__str__()}"
         )
-        result_json = jsonify({"message": "Something what wrong!"})
+        result_json = jsonify({"message": f"Error => {e.__str__()}"})
     finally:
         print(status_text)
         flash(status_text)
@@ -123,9 +123,9 @@ def check_transaction(transaction_id):
     except Exception as e:
         status_text = status_text.replace(
             "None",
-            f"[check_transaction]: Something what wrong!"
+            f"Error => {e.__str__()}"
         )
-        result_json = jsonify({"message": "Something what wrong!",
+        result_json = jsonify({"message": f"Error => {e.__str__()}",
                                "status": ""})
     finally:
         print(status_text)
@@ -133,4 +133,34 @@ def check_transaction(transaction_id):
         bank.close()
         return result_json
     
+
+@celery.task
+def check_pending_transaction() -> [bool]:
+    from celery.worker.state import requests
+    from project.apps import get_session
+    from project.models_more.model_user import Users
+    bank = Bank()
+    session = get_session()
+    result_dict = {"message":"", "id": "", "status": "истекла"}
+   
+    try:
+        
+        for transaction in bank.pending():
+            user = \
+                session(Users).query.filter_by(id < 99999).first()
+            if not user:
+                result_dict["massage"] = "User was not found"
+                requests.post(
+                    user.webhook_url, json=result_dict
+                )
+                return False
+            requests.post(
+                user.webhook_url, json={"message":"", "id": str(transaction.id),
+                                        "status": "истекла"}
+                )
+    except Exception as e:
+        print(f"Error => {e.__str__()}")
+       
+    finally:
+        bank.close()
         

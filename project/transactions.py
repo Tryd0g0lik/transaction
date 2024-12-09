@@ -3,6 +3,7 @@ Here is a logic for work with db.
 This is a management for control the transaction
 """
 from typing import (Dict, Any)
+
 from project.models import get_session
 from project.models_more.model_transaction import Transaction
 from project.models_more.model_user import Users
@@ -67,7 +68,30 @@ class Bank:
             print(f"[Bank]: 'check' Error => {e}")
         finally:
             return status
+    
+    def pending(self):
+        from datetime import datetime, timedelta
         
+        try:
+            panding_transaction = \
+                self.session(Transaction).query.filter_by(
+                    status='ожидание'
+                    ).all()
+            # !!!!--- 99999 ---!!!!! Need table between Users and Transaction
+            # Ned property the 'created_at' for a transaction
+            
+            if len(panding_transaction) == 0:
+                return panding_transaction
+            
+            for transaction in panding_transaction:
+                if datetime.now() - transaction.created_at >\
+                    timedelta(minutes=15):
+                    transaction.status = "истекла"
+                    yield transaction
+        except Exception as e:
+            print(f"[Bank]: 'check' Error => {e}")
+        finally:
+            pass
     def get_transaction(self):
         """
         TODO: Receive the transaction object after add a new transaction.
