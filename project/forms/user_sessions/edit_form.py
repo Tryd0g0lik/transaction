@@ -8,24 +8,36 @@ from wtforms import (StringField,
                      validators)
 from project.forms.validators.validate_max import validate_string_max_leng
 from project.forms.validators.validate_min import validate_string_min_leng
-class EditorUserData(FlaskForm):
+class FormEditorUserData(FlaskForm):
     balance = FloatField("balance",
                          validators=[
                              validators.InputRequired()
-                         ])
+                         ],
+                         description="By default values is  0.0"
+                         )
     commission_rate = FloatField("commission",
                                  validators=[
                                      validators.InputRequired(),
-                                 ])
+                                 ],
+                                 description="By default values is  0.05")
     webhook_url = StringField(
         "webhook_url",
         validators=[
             validators.InputRequired(),
-        ]
+        ],
+        description="By default values is 'http://example.com/webhook'. \
+Min 3 symbol and max 255"
     )
-    
-    submit = SubmitField("Change the data",
-                         render_kw={"class": "btn btn-secondary"})
+    wallet_address = StringField(
+        "wallet_address",
+        validators=[
+            validators.InputRequired(),
+        ],
+        description="By default values is '	test_wallet' \
+Min 3 symbol and max 255"
+    )
+    # submit = SubmitField("Save",
+    #                      render_kw={"class": "btn btn-secondary"})
     def validator_text_length(self, webhook_url: str,
                               max_len: int = 255, min_len:int = 3):
         """

@@ -4,6 +4,8 @@ from flask_admin import Admin
 from flask_login import LoginManager
 from flask_admin.form import SecureForm
 from flask_admin.contrib.fileadmin import FileAdmin
+
+from project.forms.user_sessions.edit_form import FormEditorUserData
 from project.models import get_session
 from project.models_more.model_transaction import Transaction
 from project.models_more.model_user import Users
@@ -36,6 +38,8 @@ def admin_pannel():
     def wrapper(app_) -> dict:
         class MyUserAdmin(ModelView):
             form_base_class = SecureForm
+            # ADMIN FORMS
+            form = FormEditorUserData
             # Кнопка будет в шаблоне
             # list_template = 'index.html'
             # create_template ="/templates/index.html"
@@ -49,7 +53,7 @@ def admin_pannel():
         admin.add_view(MyUserAdmin(User_Transaction, session))
         # https://flask-admin.readthedocs.io/en/latest/advanced/#managing-files-folders
         admin.add_view(FileAdmin("project/static", '/static/', name='Static Files'))
-       
+        
         # LOGIN
         login_manager = LoginManager()
         login_manager.init_app(app_dict["app"])
