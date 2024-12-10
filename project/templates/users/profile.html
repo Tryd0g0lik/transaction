@@ -1,0 +1,28 @@
+<head><script defer src="/scripts/main-main-789b1b83d82f775e0b26.js"></script><link href="/styles/style.css" rel="stylesheet"></head>{% extends 'layout/basis.html' %}
+
+{% block title %}{{ title }}{% endblock title %}
+{% block header %} {{ title }} {% endblock header %}
+{% block mainRowContribute %}
+{% if contain %}
+<h2> Реферальный код </h2>
+<div class="reff">
+  <ul>
+    {% for r in contain %}
+    <li class="reff-view" data-num="{{ r.id }}">
+      <div>
+        <b>{{ r.description}}:</b>
+      </div>
+      <div>
+        <a href="{{ web_host }}/{{ r.referral_code }}">{{ web_host }}/{{ r.referral_code}}</a>
+      </div>
+      <div>Удалить</div>
+    </li>
+    {% endfor %}
+  </ul>
+
+</div>
+{% else %}
+<div class="reff">Список пус</div>
+{% endif %}
+<div class="form-message">{{ message }}</div>
+{% endblock mainRowContribute %}

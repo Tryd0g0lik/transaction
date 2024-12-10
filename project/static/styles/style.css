@@ -1,0 +1,26 @@
+/*!**********************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/postcss-loader/dist/cjs.js!./src/styles/style.css ***!
+  \**********************************************************************************************************************************************/
+div.form{
+width:250px;
+}
+.navbar-nav>li:hover > .dropdown-menu{
+    bottom: auto;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+main h2,
+div.row>div {
+  padding-left: 50px;
+}
+
+.reff-view>div {
+  display: inline-block;
+}
+.reff-view>div:last-of-type {
+  cursor: pointer;
+}
+

@@ -1,13 +1,19 @@
+""" This is a decorative function for an admin panel."""
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
 from flask_login import LoginManager
+from flask_admin.form import SecureForm
+from flask_admin.contrib.fileadmin import FileAdmin
 from project.models import get_session
+from project.models_more.model_transaction import Transaction
 from project.models_more.model_user import Users
+from project.models_more.model_user_transactions import User_Transaction
+
 
 # Decorator
 def admin_pannel():
     """
-    TODO: This is a decorative function for ab admin panel.\n
+    TODO: This is a decorative function for an admin panel.\n
         The function for decorate is 'create_admin' from the 'app.py'\n
         Old 'create_admin'.\n
         The old 'create_admin' function returns \n
@@ -29,7 +35,7 @@ def admin_pannel():
     """
     def wrapper(app_) -> dict:
         class MyUserAdmin(ModelView):
-            pass
+            form_base_class = SecureForm
             # Кнопка будет в шаблоне
             # list_template = 'index.html'
             # create_template ="/templates/index.html"
@@ -39,6 +45,11 @@ def admin_pannel():
         
         session = get_session()
         admin.add_view(MyUserAdmin(Users, session))
+        admin.add_view(MyUserAdmin(Transaction, session))
+        admin.add_view(MyUserAdmin(User_Transaction, session))
+        # https://flask-admin.readthedocs.io/en/latest/advanced/#managing-files-folders
+        admin.add_view(FileAdmin("project/static", '/static/', name='Static Files'))
+       
         # LOGIN
         login_manager = LoginManager()
         login_manager.init_app(app_dict["app"])
