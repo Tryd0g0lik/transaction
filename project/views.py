@@ -1,5 +1,7 @@
 from flask import (request, jsonify, flash, Response)
 from typing import (Dict, Any)
+
+from flask_admin.contrib.sqla import ModelView
 from celery import Celery
 
 from project.apps import app_ as app
@@ -164,3 +166,10 @@ def check_pending_transaction() -> [bool]:
     finally:
         bank.close()
 
+
+
+class UserAdmin(ModelView):
+    column_list = ('balance', 'commission_rate',)
+    # column_labels = {'username': 'Username', 'email': 'Email Address', 'role': 'Role'}
+    # column_filters = ('username', 'email', 'role.name')
+    
