@@ -6,6 +6,27 @@ from project.models_more.model_user import Users
 
 # Decorator
 def admin_pannel():
+    """
+    TODO: This is a decorative function for ab admin panel.\n
+        The function for decorate is 'create_admin' from the 'app.py'\n
+        Old 'create_admin'.\n
+        The old 'create_admin' function returns \n
+        ```text \n
+        flask_dict = create_flask() \n
+        app_ = flask_dict["app"]\n
+        csrf = flask_dict["csrf"]\n
+        bcrypt = flask_dict["bcrypt"]\n
+        ``` \n
+        New 'create_admin'\n
+        The new 'create_admin' function receives an administration panel and \n
+        ```text \n
+        flask_dict = create_flask\n
+        app_ = flask_dict["app"]\n
+        csrf = flask_dict["csrf"]\n
+        bcrypt = flask_dict["bcrypt"]\n
+        ```\n
+        The admin panel is access to path '/admin/'.
+    """
     def wrapper(app_) -> dict:
         class MyUserAdmin(ModelView):
             pass
