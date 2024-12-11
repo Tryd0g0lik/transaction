@@ -6,8 +6,12 @@ from wtforms import (StringField,
                      SubmitField,
                      FloatField,
                      validators)
+
 from project.forms.validators.validate_max import validate_string_max_leng
 from project.forms.validators.validate_min import validate_string_min_leng
+
+
+
 class FormEditorUserData(FlaskForm):
     balance = FloatField("balance",
                          validators=[

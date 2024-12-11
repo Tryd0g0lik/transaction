@@ -5,6 +5,8 @@ from flask_login import LoginManager
 from flask_admin.form import SecureForm
 from flask_admin.contrib.fileadmin import FileAdmin
 
+from project.forms.transaction_sessions.edit_form import \
+    FormEditorTransactionData
 from project.forms.user_sessions.edit_form import FormEditorUserData
 from project.models import get_session
 from project.models_more.model_transaction import Transaction
@@ -13,6 +15,7 @@ from project.models_more.model_user_transactions import User_Transaction
 
 
 # Decorator
+
 def admin_pannel():
     """
     TODO: This is a decorative function for an admin panel.\n
@@ -36,8 +39,17 @@ def admin_pannel():
         The admin panel is access to path '/admin/'.
     """
     def wrapper(app_) -> dict:
+        class MyTransactionDate(ModelView):
+            # form_base_class = SecureForm
+            form = FormEditorTransactionData
+        class MyUserAdminEdit(ModelView):
+            # form_base_class = SecureForm
+            can_delete = True
+            # ADMIN FORMS
+            form = FormEditorUserData
         class MyUserAdmin(ModelView):
-            form_base_class = SecureForm
+            # form_base_class = SecureForm
+            can_delete = True
             # ADMIN FORMS
             form = FormEditorUserData
             # Кнопка будет в шаблоне
@@ -48,9 +60,11 @@ def admin_pannel():
         admin = Admin(app_dict["app"])
         
         session = get_session()
-        admin.add_view(MyUserAdmin(Users, session))
-        admin.add_view(MyUserAdmin(Transaction, session))
-        admin.add_view(MyUserAdmin(User_Transaction, session))
+        admin.add_view(MyUserAdmin(Users, session,
+                                   name="User", url="/admin/users/"))
+        admin.add_view(MyTransactionDate(Transaction, session,
+                                         url="/admin/transaction/new/"))
+        # admin.add_view(MyUserAdmin(User_Transaction, session))
         # https://flask-admin.readthedocs.io/en/latest/advanced/#managing-files-folders
         admin.add_view(FileAdmin("project/static", '/static/', name='Static Files'))
         
