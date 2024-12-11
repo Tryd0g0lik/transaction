@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from flask_admin.form import SecureForm
 from flask_admin.contrib.fileadmin import FileAdmin
 
+# from project.admins_.user_transaction_admin import MyTransactionAdmin
 from project.forms.transaction_sessions.edit_form import \
     FormEditorTransactionData
 from project.forms.user_sessions.edit_form import FormEditorUserData
@@ -44,12 +45,12 @@ def admin_pannel():
             form = FormEditorTransactionData
         class MyUserAdminEdit(ModelView):
             # form_base_class = SecureForm
-            can_delete = True
+            # can_delete = True
             # ADMIN FORMS
             form = FormEditorUserData
         class MyUserAdmin(ModelView):
             # form_base_class = SecureForm
-            can_delete = True
+            # can_delete = True
             # ADMIN FORMS
             form = FormEditorUserData
             # Кнопка будет в шаблоне
@@ -60,10 +61,18 @@ def admin_pannel():
         admin = Admin(app_dict["app"])
         
         session = get_session()
-        admin.add_view(MyUserAdmin(Users, session,
-                                   name="User", url="/admin/users/"))
-        admin.add_view(MyTransactionDate(Transaction, session,
-                                         url="/admin/transaction/new/"))
+        admin.add_views(
+            MyUserAdmin(Users, session, name="User", url="/admin/users/"),
+            MyTransactionDate(
+                User_Transaction, session,
+                url="/admin/user_transaction/"
+                ),
+        )
+        # admin.add_views
+        # admin.add_view(MyTransactionDate(Transaction, session,
+        #                                  url="/admin/transaction/new/"))
+        # admin.add_view(MyTransactionDate(User_Transaction, session,
+        #                                   url="/admin/user_transaction/"))
         # admin.add_view(MyUserAdmin(User_Transaction, session))
         # https://flask-admin.readthedocs.io/en/latest/advanced/#managing-files-folders
         admin.add_view(FileAdmin("project/static", '/static/', name='Static Files'))
@@ -75,7 +84,9 @@ def admin_pannel():
         # Loder of user
         @login_manager.user_loader
         def user_loader(user_id):
-            return Users.get(user_id)
+            from project.apps import get_session
+            session = get_session()
+            return session(Users).query.get(user_id)
 
         return app_dict
     return wrapper

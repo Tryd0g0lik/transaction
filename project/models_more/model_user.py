@@ -15,3 +15,4 @@ class Users(Base):
     def __str__(self):
         return f"Index: {self.id}, Balance: {self.balance}, Commissiom:\
 {self.commission_rate}"
+

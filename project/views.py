@@ -139,7 +139,7 @@ def check_transaction(transaction_id):
 @celery.task
 def check_pending_transaction() -> [bool]:
     from celery.worker.state import requests
-    from project.apps import get_session
+    
     from project.models_more.model_user import Users
     bank = Bank()
     session = get_session()
@@ -149,7 +149,7 @@ def check_pending_transaction() -> [bool]:
         
         for transaction in bank.pending():
             user = \
-                session(Users).query.filter_by(id < 99999).first()
+                session(Users).query.all()# filter_by(id < 99999).first()
             if not user:
                 result_dict["massage"] = "User was not found"
                 requests.post(

@@ -2,8 +2,6 @@ import sqlalchemy as sq
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from project.models_more.model_init import Base
-from project.models_more.model_user import Users
-from project.models_more.model_transaction import Transaction
 
 class User_Transaction(Base):
     """
