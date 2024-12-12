@@ -3,9 +3,6 @@ Here is a logic for work with db.
 This is a management for control the transaction
 """
 from typing import (Dict, Any)
-
-from project.apps import app_ as app
-
 from project.models import get_session
 from project.models_more.model_transaction import Transaction
 from project.models_more.model_user import Users
