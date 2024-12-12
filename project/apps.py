@@ -1,12 +1,14 @@
-from flask import Flask, render_template
+from flask import Flask #, render_template
 from flask_bcrypt import Bcrypt
 from flask_bootstrap import Bootstrap
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.routing import BaseConverter
 
 from project.admins import admin_pannel
+# from project.celeries.celery import celery_init_app
+# from project.celeries.make_celery import get_celery_app
 from project.models import get_session
-from dotenv_ import (SECRET_KEY, DSN)
+from dotenv_ import (SECRET_KEY, DSN, REDIS_URL)
 from flask_redis import FlaskRedis
 
 
@@ -26,8 +28,7 @@ def create_flask():
     app.config["SECRET_KEY"] = SECRET_KEY
     app.config["SQLALCHEMY_DATABASE_URI"] = DSN
     app.config["JWT_COOKIE_SECURE"] = True
-    app.config['CELERY_TASK_SERIALIZER'] = 'json'
-    app.config['CELERY_ACCEPT_CONTENT'] = ['json']
+    
     
     # Converter reg-expression
     app.url_map.converters["regex"] = RegexConverter
@@ -36,6 +37,7 @@ def create_flask():
     bootstrap = Bootstrap(app)
     app.config["BOOTSTRAP"] = bootstrap
     csrf = CSRFProtect(app)
+    
     
 
     # CREATE REDIS
@@ -53,6 +55,7 @@ app_ = flask_dict["app"]
 csrf = flask_dict["csrf"]
 bcrypt = flask_dict["bcrypt"]
 app_type = type(app_)
+# celery_app = get_celery_app(app_)
 
 
 # USER's COMMAND of user's interface

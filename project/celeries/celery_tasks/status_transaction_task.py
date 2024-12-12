@@ -1,8 +1,9 @@
 """Celery tasks by transactions"""
-
-from project.models_more.model_user_transactions import User_Transaction
+from project.celeries.celery import celery_init_app
+# from project.apps import celery_app
 from project.transactions import Bank
-from project.celeries.make_celery import celery_app
+# from project.celeries.make_celery import
+celery_app = celery_init_app()
 
 @celery_app.task(
     name="task_transaction_status_check",
@@ -12,6 +13,8 @@ from project.celeries.make_celery import celery_app
 )
 def check_pending_transaction() -> [bool]:
     from celery.worker.state import requests
+
+    from project.models_more.model_user_transactions import User_Transaction
     from project.models_more.model_user import Users
     bank = Bank()
     session = bank.session
@@ -23,20 +26,34 @@ def check_pending_transaction() -> [bool]:
             # session(Users).query.all()  # filter_by(id < 99999).first()
             user = \
                 session(User_Transaction).query.all()  # filter_by(id < 99999).first()
-        if not user:
-            result_dict["massage"] = "User was not found"
+            if not user:
+                result_dict["massage"] = "User was not found"
+                requests.post(
+                    user.webhook_url, json=result_dict
+                )
+                return False
             requests.post(
-                user.webhook_url, json=result_dict
+                user.webhook_url,
+                json={"message": "", "id": str(transaction.id),
+                      "status": "истекла"}
             )
-            return False
-        requests.post(
-            user.webhook_url,
-            json={"message": "", "id": str(transaction.id),
-                  "status": "истекла"}
-        )
     
     except Exception as e:
         print(f"Error => {e.__str__()}")
     
     finally:
         bank.close()
+        
+def start_first_celery_task() -> None:
+    try:
+        from celery.result import AsyncResult
+        check_pending_transaction.apply_async(
+            queue='queve_status_transaction',
+            exchange='exchange_status_transaction',
+        )
+        resp = check_pending_transaction.delay()
+        result = AsyncResult(resp.id)
+    except Exception as e:
+        print(f"[celery task run]: Mistake => {e.__str__()}")
+    finally:
+        pass

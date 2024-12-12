@@ -5,7 +5,8 @@ from flask_admin import Admin
 from flask_login import LoginManager
 from flask_admin.contrib.fileadmin import FileAdmin
 
-# from project.decorators.celery_tasks import transaction_pending_wraper
+from project.celeries.celery_tasks.status_transaction_task import \
+    start_first_celery_task
 # from project.admins_.user_transaction_admin import MyTransactionAdmin
 from project.forms.transaction_sessions.edit_form import \
     FormEditTransactionData
@@ -16,6 +17,7 @@ from project.models_more.model_transaction import Transaction
 from project.models_more.model_user import Users
 from project.models_more.model_user_transactions import User_Transaction
 from project.transactions import Bank
+
 # from project.celeries.celery_tasks.status_transaction_task import check_pending_transaction
 
 # Celery вызвать задачу . Сделать авто обновление списка транзакций. Проверить АPI
@@ -44,13 +46,10 @@ def admin_pannel():
         ```\n
         The admin panel is access to path '/admin/'.
     """
-    # class task_celery():
-    #     def __init__(self, app):
-        
-    
-        
-        
     def wrapper(app_) -> dict:
+        # CELERY it's RUN TASK
+        start_first_celery_task()
+        # FORM INTEGRATIONS to the ADMIN PANEL
         class MyTransactionDate(ModelView):
             column_exclude_list = ["amount"]
             form = FormEditTransactionData
