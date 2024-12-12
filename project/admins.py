@@ -7,7 +7,6 @@ from flask_admin.contrib.fileadmin import FileAdmin
 
 from project.celeries.celery_tasks.status_transaction_task import \
     start_first_celery_task
-# from project.admins_.user_transaction_admin import MyTransactionAdmin
 from project.forms.transaction_sessions.edit_form import \
     FormEditTransactionData
 from project.forms.user_sessions.edit_form import FormEditorUserData
@@ -18,10 +17,6 @@ from project.models_more.model_user import Users
 from project.models_more.model_user_transactions import User_Transaction
 from project.transactions import Bank
 
-# from project.celeries.celery_tasks.status_transaction_task import check_pending_transaction
-
-# Celery вызвать задачу . Сделать авто обновление списка транзакций. Проверить АPI
-# redis настроить
 # Decorator
 
 def admin_pannel():
@@ -75,19 +70,7 @@ def admin_pannel():
         )
         # https://flask-admin.readthedocs.io/en/latest/advanced/#managing-files-folders
         admin.add_view(FileAdmin("project/static", '/static/', name='Static Files'))
-        
-        
-        
-        
-        # # CELERY
-        # @transaction_pending_wraper(app_dict["app"])
-        # def transaction_live():
-        #     return check_pending_transaction()
-        #
-        # transaction_live()
-        
-        
-        
+  
         # LOGIN command
         login_manager = LoginManager()
         login_manager.init_app(app_dict["app"])

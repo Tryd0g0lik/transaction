@@ -4,6 +4,8 @@ from project.celeries.celery import celery_init_app
 # from project.apps import celery_app
 
 # from project.celeries.make_celery import
+from celery.worker.state import requests
+from project.transactions import Bank
 celery_app = celery_init_app()
 
 @celery_app.task(
@@ -13,9 +15,6 @@ celery_app = celery_init_app()
     routing_key="hard"
 )
 def check_pending_transaction() -> [bool]:
-    from celery.worker.state import requests
-    from project.transactions import Bank
-    # from project.models_more.model_user_transactions import User_Transaction
     from project.models_more.model_user import Users
     from project.logs import configure_logging
     log = logging.getLogger(__name__)
