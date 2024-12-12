@@ -2,7 +2,6 @@
 import logging
 from project.celeries.celery import celery_init_app
 from celery.worker.state import requests
-from project.models import get_session
 from project.transactions import Bank
 celery_app = celery_init_app()
 
@@ -13,12 +12,15 @@ celery_app = celery_init_app()
     routing_key="hard"
 )
 def check_pending_transaction() -> [bool]:
+    """
+    Задача сырая. Логика не доведена до конца
+    :return:
+    """
     # from project.models_more.model_user_transactions import User_Transaction
     from project.models_more.model_user import Users
     from project.logs import configure_logging
     log = logging.getLogger(__name__)
     configure_logging(logging.INFO)
-    # configure_logging(logging.INFO)
     bank = Bank()
     log.info("[check_pending_transaction]: opening the 'Bank' class")
     # session = bank.session
@@ -27,10 +29,9 @@ def check_pending_transaction() -> [bool]:
     try:
         log.info("[check_pending_transaction]: 'for transaction in bank.pending()'")
         for transaction in bank.pending():
+           
             log.info("[check_pending_transaction]: before receiving list of all users from db  ")
-            # session(Users).query.all()  # filter_by(id < 99999).first()
-            # with bank.session as session:
-            with get_session() as session:
+            with bank.session as session:
                 user = \
                     session(Users).query.filter_by(id=1)  # filter_by(id < 99999).first()
                 if not user:

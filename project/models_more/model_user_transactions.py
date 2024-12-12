@@ -1,3 +1,4 @@
+"""Here contain structure for 'User_Transaction' table of db """
 import sqlalchemy as sq
 from sqlalchemy.orm import relationship
 from datetime import datetime

@@ -17,30 +17,15 @@ class Bank:
         self.session = get_session()
         self._transaction = None
 
-    def get_user_all_(self) -> list:
-        try:
-            """
-            'self.session(Users)' вызывает
-             ошибку => 'Session' object is not callable
-             При этом добавление и удаление юзеров - рабочие
-             (используют тот же get_session())
-            """
-            user_list = self.session(Users).query.all()
-            return user_list
-        except Exception as e:
-            print(f"[get_user_all_]: Error => {e}")
-        finally:
-            pass
-        
-    def get_transaction_all(self)-> list:
-        try:
-            user_list = self.session(Transaction).query.all()
-            return user_list
-        except Exception as e:
-            print(f"[get_transaction_all]: Error => {e}")
-        finally:
-            pass
     def add(self, user_id: int, amount: float) -> bool:
+        """
+        TODO: This is the integration with db. It is when we need to make adding \
+            new data to the db.
+        :param user_id: int. Id of user.
+        :param amount: float. It's sum of transaction.
+        :return: bool If True is returning the , it means what is \
+            everything OK or not if is received the False
+        """
         status = False
         try:
             # Receives the user and calculates the commission
@@ -102,6 +87,11 @@ class Bank:
             return status
     
     def pending(self):
+        """
+        Ошибка. Вызывая метод в celery задачи session НЕ рабочая!
+        
+        :return:
+        """
         from datetime import datetime, timedelta
         
         try:
@@ -111,12 +101,21 @@ class Bank:
                     ).all()
             if len(panding_transaction) == 0:
                 return panding_transaction
-            
-            for transaction in panding_transaction:
-                if datetime.now() - transaction.created_at >\
+            """
+           panding_transaction
+           Получаем список id-транзакций, id-пользлвателей,  время\
+            регистрации транзакции (при налиции \
+           данных в базе данных)
+           
+           """
+            for user_transaction in panding_transaction:
+                if datetime.now() - user_transaction.created_at >\
                     timedelta(minutes=15):
-                    transaction.status = "истекла"
+                    transaction = self.session(Transaction).query\
+                        .filter_by(id=user_transaction.trasaction_id)
                     yield transaction
+                    transaction.status = "истекла"
+                    self.session.commit()
         except Exception as e:
             print(f"[Bank]: 'check' Error => {e}")
         finally:

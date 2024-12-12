@@ -1,4 +1,4 @@
-""" This is a decorative function for an admin panel."""
+""" Decorater. This is a decorative function for an admin panel. """
 
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin

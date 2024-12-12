@@ -1,3 +1,7 @@
+"""
+Here is containing the 'get_session' function, We will have to receive \
+an integration of new data to the db.
+"""
 import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker

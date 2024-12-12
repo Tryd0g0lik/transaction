@@ -1,26 +1,30 @@
-from flask import Flask #, render_template
+"""
+Here is the run app of Flask and
+USER's COMMAND of user's interface/ It's for create random of admin
+"""
+from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_bootstrap import Bootstrap
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.routing import BaseConverter
 
 from project.admins import admin_pannel
-# from project.celeries.celery import celery_init_app
-# from project.celeries.make_celery import get_celery_app
 from project.models import get_session
-from dotenv_ import (SECRET_KEY, DSN, REDIS_URL)
+from dotenv_ import (SECRET_KEY, DSN,)
 from flask_redis import FlaskRedis
-
-
 
 @admin_pannel()
 def create_flask():
-   
+    """
+    Creating the app flask
+    :return:
+    """
 
     class RegexConverter(BaseConverter):
         def __init__(self, url_map, regex):
             super(RegexConverter, self).__init__(url_map)
             self.regex = regex
+
     app = Flask(__name__, template_folder="templates")
     app.config.from_object(__name__)
     
@@ -37,8 +41,6 @@ def create_flask():
     bootstrap = Bootstrap(app)
     app.config["BOOTSTRAP"] = bootstrap
     csrf = CSRFProtect(app)
-    
-    
 
     # CREATE REDIS
     redis_client = FlaskRedis()
@@ -55,17 +57,15 @@ app_ = flask_dict["app"]
 csrf = flask_dict["csrf"]
 bcrypt = flask_dict["bcrypt"]
 app_type = type(app_)
-# celery_app = get_celery_app(app_)
 
 
 # USER's COMMAND of user's interface
 @app_.cli.command("create-users")
 def create_admin():
     """
-    TODO: COmmand for a create the user
+    TODO: Command for a create the user
     :return:
     """
-    # from project.apps import get_session
     from project.models_more.model_user import Users
     
     session = get_session()
@@ -80,7 +80,6 @@ def create_admin():
         session.commit()
         print("Admin user created.")
     except Exception as e:
-        
         print(f"Admin user not created. Mistake => {e.__str__()}")
     finally:
         session.close()

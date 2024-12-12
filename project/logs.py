@@ -1,7 +1,11 @@
+"""
+This page has a logics for logging.
+Data result from logging we can see in console and in 'log_putout.log' file.
+"""
 import logging
 
 
-def configure_logging(level: int = logging.INFO, log_file="log_putout.log"):
+def configure_logging(level: int = logging.INFO, log_file="log_putout.log") -> None:
     """
     For a beginning work
     :param level:
@@ -14,6 +18,8 @@ def configure_logging(level: int = logging.INFO, log_file="log_putout.log"):
         log = logging.getLogger(__name__) \n
         configure_logging(logging.INFO) \n
         log.info("run_consumer start ")
+        
+        // [2024-12-12 16:23:56,991: INFO/MainProcess] run_consumer start '
     ````
     """
     file_handler = logging.FileHandler(log_file)
