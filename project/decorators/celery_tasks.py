@@ -1,14 +1,19 @@
 from typing import Callable, Any
 from celery import Celery
+from dotenv_ import REDIS_URL
 def transaction_pending_wraper(app):
-    def wrapper(fun: Callable[[], Any]):
-        celery = Celery(app.name, broker='redis://localhost:6379/0')
+    def wrapper(fun):
+        celery = Celery(app.name, broker=f"{REDIS_URL}")
         
         @celery.task
-        def task_list_transaction_live():
+        async def task_list_transaction_live():
             return fun()
         
-        return task_list_transaction_live.delay()
+        return task_list_transaction_live.apply_async(
+            queve="status_transaction",
+            countdown=1,
+            time_limit=5
+        )
     
     return wrapper
 

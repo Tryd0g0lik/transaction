@@ -7,30 +7,40 @@ from werkzeug.routing import BaseConverter
 from project.admins import admin_pannel
 from project.models import get_session
 from dotenv_ import (SECRET_KEY, DSN)
+from flask_redis import FlaskRedis
 
 
 
 @admin_pannel()
 def create_flask():
+   
+
     class RegexConverter(BaseConverter):
         def __init__(self, url_map, regex):
             super(RegexConverter, self).__init__(url_map)
             self.regex = regex
     app = Flask(__name__, template_folder="templates")
     app.config.from_object(__name__)
-    csrf = CSRFProtect(app)
-   
-    app.config["SQLALCHEMY_DATABASE_URI"] = DSN
-    app.url_map.converters["regex"] = RegexConverter
-    app.config["JWT_COOKIE_SECURE"] = True
     
-    bcrypt = Bcrypt(app)
-    
+    # CONFIG APP
     app.config["SECRET_KEY"] = SECRET_KEY
+    app.config["SQLALCHEMY_DATABASE_URI"] = DSN
+    app.config["JWT_COOKIE_SECURE"] = True
+    app.config['CELERY_TASK_SERIALIZER'] = 'json'
+    app.config['CELERY_ACCEPT_CONTENT'] = ['json']
+    # Converter reg-expression
+    app.url_map.converters["regex"] = RegexConverter
+    # EXTENSIONS
+    bcrypt = Bcrypt(app)
     bootstrap = Bootstrap(app)
+    csrf = CSRFProtect(app)
 
     app.config["BOOTSTRAP"] = bootstrap
 
+    # CREATE REDIS
+    redis_client = FlaskRedis()
+    # REDIS INSTALL to the app
+    redis_client.init_app(app)
     return {
         "app": app,
         "csrf": csrf,

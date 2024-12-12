@@ -83,7 +83,7 @@ def admin_pannel():
         def transaction_live():
             return check_pending_transaction()
 
-        transaction_live.delay()
+        transaction_live()
         # LOGIN command
         login_manager = LoginManager()
         login_manager.init_app(app_dict["app"])
