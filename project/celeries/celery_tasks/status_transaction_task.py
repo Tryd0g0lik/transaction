@@ -2,8 +2,14 @@
 
 from project.models_more.model_user_transactions import User_Transaction
 from project.transactions import Bank
+from project.celeries.make_celery import celery_app
 
-
+@celery_app.task(
+    name="task_transaction_status_check",
+    autoretry_for=(Exception, ),
+    retry_kwargs={"max_retries": 5},
+    routing_key="hard"
+)
 def check_pending_transaction() -> [bool]:
     from celery.worker.state import requests
     from project.models_more.model_user import Users

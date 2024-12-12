@@ -28,14 +28,15 @@ def create_flask():
     app.config["JWT_COOKIE_SECURE"] = True
     app.config['CELERY_TASK_SERIALIZER'] = 'json'
     app.config['CELERY_ACCEPT_CONTENT'] = ['json']
+    
     # Converter reg-expression
     app.url_map.converters["regex"] = RegexConverter
     # EXTENSIONS
     bcrypt = Bcrypt(app)
     bootstrap = Bootstrap(app)
-    csrf = CSRFProtect(app)
-
     app.config["BOOTSTRAP"] = bootstrap
+    csrf = CSRFProtect(app)
+    
 
     # CREATE REDIS
     redis_client = FlaskRedis()
