@@ -31,3 +31,4 @@ class User_Transaction(Base):
     def __str__(self):
         return f"User's index: {self.user_id}, \
 user transaction's index:{self.trasaction_id}"
+

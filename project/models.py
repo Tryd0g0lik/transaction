@@ -1,4 +1,4 @@
-import sqlalchemy as sq
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -16,6 +16,3 @@ def get_session():
     Session = sessionmaker(bind=engine)
     """Receive the session"""
     return Session()
-# DATABASE_URL = f"{SETTING_POSTGRES_HOST}:{SETTING_POSTGRES_PORT}"
-# DNS: str = app_.config["SQLALCHEMY_DATABASE_URI"]
-# engine = sq.create_engine(DNS, pool_pre_ping=True)

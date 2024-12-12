@@ -24,11 +24,9 @@ form_choices = {
 #     "users":get_user_all()
 # }
 # This is a TEST FORM !
-class FormEditorTransactionData(FlaskForm):
+class FormEditTransactionData(FlaskForm):
     
-    def __init__(self, *args,):
-        super(FormEditorTransactionData, self).__init__(args)
-        self.user_id.choices = self.get_user_all()
+   
         
     amount = FloatField("Sum",
                         default="0.0",
@@ -52,15 +50,5 @@ transaction"
                          ],
                          choices=form_choices,
                          )
+
     
-    user_id = SelectField('User', coerce=int,
-                          choices=[])
-    
-    
-    #
-    def get_user_all(self) -> list :
-        from project.apps import get_session
-        from project.models_more.model_user import Users
-        session = get_session()
-        user_list = session(Users).query.all()
-        return user_list

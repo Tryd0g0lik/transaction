@@ -4,6 +4,8 @@ This is a management for control the transaction
 """
 from typing import (Dict, Any)
 
+from project.apps import app_ as app
+
 from project.models import get_session
 from project.models_more.model_transaction import Transaction
 from project.models_more.model_user import Users
@@ -17,7 +19,30 @@ class Bank:
     def __init__(self):
         self.session = get_session()
         self._transaction = None
-    
+
+    def get_user_all_(self) -> list:
+        try:
+            """
+            'self.session(Users)' вызывает
+             ошибку => 'Session' object is not callable
+             При этом добавление и удаление юзеров - рабочие
+             (используют тот же get_session())
+            """
+            user_list = self.session(Users).query.all()
+            return user_list
+        except Exception as e:
+            print(f"[get_user_all_]: Error => {e}")
+        finally:
+            pass
+        
+    def get_transaction_all(self)-> list:
+        try:
+            user_list = self.session(Transaction).query.all()
+            return user_list
+        except Exception as e:
+            print(f"[get_transaction_all]: Error => {e}")
+        finally:
+            pass
     def add(self, user_id: int, amount: float) -> bool:
         status = False
         try:
@@ -109,10 +134,13 @@ class Bank:
         :return: object
         """
         return self._transaction
-    
+
+   
     def close(self):
         """Close the session"""
         try:
             self.session.close()
         except Exception as e:
             print(f"[Library]: Библиотека закрыта. Error => {e}")
+
+    

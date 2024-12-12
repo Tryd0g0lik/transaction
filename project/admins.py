@@ -7,14 +7,18 @@ from flask_admin.contrib.fileadmin import FileAdmin
 
 # from project.admins_.user_transaction_admin import MyTransactionAdmin
 from project.forms.transaction_sessions.edit_form import \
-    FormEditorTransactionData
+    FormEditTransactionData
 from project.forms.user_sessions.edit_form import FormEditorUserData
-from project.models import get_session
+from project.forms.user_transactions_forms.edit_form import \
+    FormEditUser_TransactionData
 from project.models_more.model_transaction import Transaction
 from project.models_more.model_user import Users
 from project.models_more.model_user_transactions import User_Transaction
+from project.transactions import Bank
 
 
+# Celery вызвать задачу . Сделать авто обновление списка транзакций. Проверить АPI
+# redis настроить
 # Decorator
 
 def admin_pannel():
@@ -41,39 +45,26 @@ def admin_pannel():
     """
     def wrapper(app_) -> dict:
         class MyTransactionDate(ModelView):
-            # form_base_class = SecureForm
-            form = FormEditorTransactionData
-        class MyUserAdminEdit(ModelView):
-            # form_base_class = SecureForm
-            # can_delete = True
-            # ADMIN FORMS
-            form = FormEditorUserData
+            column_exclude_list = ["amount"]
+            form = FormEditTransactionData
+        class MyUser_TransactionAdmin(ModelView):
+            form = FormEditUser_TransactionData
+
         class MyUserAdmin(ModelView):
-            # form_base_class = SecureForm
-            # can_delete = True
-            # ADMIN FORMS
             form = FormEditorUserData
-            # Кнопка будет в шаблоне
-            # list_template = 'index.html'
-            # create_template ="/templates/index.html"
         # ADMIN PANEL
         app_dict = app_()
         admin = Admin(app_dict["app"])
-        
-        session = get_session()
+        bank =Bank()
+        session = bank.session
         admin.add_views(
             MyUserAdmin(Users, session, name="User", url="/admin/users/"),
             MyTransactionDate(
-                User_Transaction, session,
-                url="/admin/user_transaction/"
+                Transaction, session,
+                url="/admin/transaction/"
                 ),
+            MyUser_TransactionAdmin(User_Transaction, session, name="User transaction", url="/admin/user_transaction/")
         )
-        # admin.add_views
-        # admin.add_view(MyTransactionDate(Transaction, session,
-        #                                  url="/admin/transaction/new/"))
-        # admin.add_view(MyTransactionDate(User_Transaction, session,
-        #                                   url="/admin/user_transaction/"))
-        # admin.add_view(MyUserAdmin(User_Transaction, session))
         # https://flask-admin.readthedocs.io/en/latest/advanced/#managing-files-folders
         admin.add_view(FileAdmin("project/static", '/static/', name='Static Files'))
         
@@ -85,7 +76,8 @@ def admin_pannel():
         @login_manager.user_loader
         def user_loader(user_id):
             from project.apps import get_session
-            session = get_session()
+            bank = Bank()
+            session = bank.session
             return session(Users).query.get(user_id)
 
         return app_dict

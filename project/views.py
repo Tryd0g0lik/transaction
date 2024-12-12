@@ -2,13 +2,13 @@ from flask import (request, jsonify, flash, Response)
 from typing import (Dict, Any)
 
 from flask_admin.contrib.sqla import ModelView
-from celery import Celery
+
 
 from project.apps import app_ as app
+from project.models import get_session
 from project.transactions import Bank
 
-# Celery
-celery = Celery(app.name, broker='redis://localhost:6379/0')
+
 
 @app.router("/api/v1/create_transaction", methods=["POST"])
 def create_transaction() -> Response:
@@ -134,42 +134,3 @@ def check_transaction(transaction_id):
         flash(status_text)
         bank.close()
         return result_json
-    
-
-@celery.task
-def check_pending_transaction() -> [bool]:
-    from celery.worker.state import requests
-    
-    from project.models_more.model_user import Users
-    bank = Bank()
-    session = get_session()
-    result_dict = {"message":"", "id": "", "status": "истекла"}
-   
-    try:
-        
-        for transaction in bank.pending():
-            user = \
-                session(Users).query.all()# filter_by(id < 99999).first()
-            if not user:
-                result_dict["massage"] = "User was not found"
-                requests.post(
-                    user.webhook_url, json=result_dict
-                )
-                return False
-            requests.post(
-                user.webhook_url, json={"message":"", "id": str(transaction.id),
-                                        "status": "истекла"}
-                )
-    except Exception as e:
-        print(f"Error => {e.__str__()}")
-       
-    finally:
-        bank.close()
-
-
-
-class UserAdmin(ModelView):
-    column_list = ('balance', 'commission_rate',)
-    # column_labels = {'username': 'Username', 'email': 'Email Address', 'role': 'Role'}
-    # column_filters = ('username', 'email', 'role.name')
-    

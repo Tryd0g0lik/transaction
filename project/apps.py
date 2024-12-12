@@ -53,6 +53,7 @@ def create_admin():
     """
     # from project.apps import get_session
     from project.models_more.model_user import Users
+    
     session = get_session()
     try:
         admin_user = Users(
