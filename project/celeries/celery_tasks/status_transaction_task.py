@@ -1,10 +1,8 @@
 """Celery tasks by transactions"""
 import logging
 from project.celeries.celery import celery_init_app
-# from project.apps import celery_app
-
-# from project.celeries.make_celery import
 from celery.worker.state import requests
+from project.models import get_session
 from project.transactions import Bank
 celery_app = celery_init_app()
 
@@ -15,6 +13,7 @@ celery_app = celery_init_app()
     routing_key="hard"
 )
 def check_pending_transaction() -> [bool]:
+    # from project.models_more.model_user_transactions import User_Transaction
     from project.models_more.model_user import Users
     from project.logs import configure_logging
     log = logging.getLogger(__name__)
@@ -22,7 +21,7 @@ def check_pending_transaction() -> [bool]:
     # configure_logging(logging.INFO)
     bank = Bank()
     log.info("[check_pending_transaction]: opening the 'Bank' class")
-    session = bank.session
+    # session = bank.session
     result_dict = {"message": "", "id": "", "status": "истекла"}
     log.info("[check_pending_transaction]: run the task 'check_pending_transaction' name.")
     try:
@@ -30,22 +29,24 @@ def check_pending_transaction() -> [bool]:
         for transaction in bank.pending():
             log.info("[check_pending_transaction]: before receiving list of all users from db  ")
             # session(Users).query.all()  # filter_by(id < 99999).first()
-            user = \
-                session(Users).query.filter_by(id=1)  # filter_by(id < 99999).first()
-            if not user:
-                log.info("[check_pending_transaction]: User was not found")
-                result_dict["massage"] = "User was not found"
+            # with bank.session as session:
+            with get_session() as session:
+                user = \
+                    session(Users).query.filter_by(id=1)  # filter_by(id < 99999).first()
+                if not user:
+                    log.info("[check_pending_transaction]: User was not found")
+                    result_dict["massage"] = "User was not found"
+                    requests.post(
+                        user.webhook_url, json=result_dict
+                    )
+                    return False
+                log.info("[check_pending_transaction]: User was found")
                 requests.post(
-                    user.webhook_url, json=result_dict
+                    user.webhook_url,
+                    json={"message": "", "id": str(transaction.id),
+                          "status": "истекла"}
                 )
-                return False
-            log.info("[check_pending_transaction]: User was found")
-            requests.post(
-                user.webhook_url,
-                json={"message": "", "id": str(transaction.id),
-                      "status": "истекла"}
-            )
-    
+        
     except Exception as e:
         print(f"Error => {e.__str__()}")
         log.info(f"Error => {e.__str__()}")
