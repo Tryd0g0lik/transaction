@@ -32,7 +32,7 @@ def check_pending_transaction() -> [bool]:
             log.info("[check_pending_transaction]: before receiving list of all users from db  ")
             # session(Users).query.all()  # filter_by(id < 99999).first()
             user = \
-                session(Users).query.all()  # filter_by(id < 99999).first()
+                session(Users).query.filter_by(id=1)  # filter_by(id < 99999).first()
             if not user:
                 log.info("[check_pending_transaction]: User was not found")
                 result_dict["massage"] = "User was not found"

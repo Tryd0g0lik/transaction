@@ -105,11 +105,16 @@ class Bank:
         from datetime import datetime, timedelta
         
         try:
+            # panding_transaction = \
+            #     self.session(Transaction).query.filter_by(
+            #         status='ожидание'
+            #         ).all()
             panding_transaction = \
-                self.session(Transaction).query.filter_by(
+                self.session(User_Transaction).query.filter_by(
                     status='ожидание'
                     ).all()
-            transaction_all = Transaction.query.all()
+            
+            # transaction_all = Transaction.query.all()
             # !!!!--- 99999 ---!!!!! Need table between Users and Transaction
             # Ned property the 'created_at' for a transaction
             
