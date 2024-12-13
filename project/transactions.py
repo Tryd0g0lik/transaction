@@ -11,7 +11,9 @@ from project.models_more.model_user_transactions import User_Transaction
 
 class Bank:
     """
-    This is a management for control the transaction
+    TODO:" This is a management for control the transaction.
+        Logics is for work to an API and only one method  \
+        the 'pending' is working to the 'celery task.
     """
     def __init__(self):
         self.session = get_session()

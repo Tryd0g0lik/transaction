@@ -1,5 +1,5 @@
 """
-Here is containing the 'get_session' function, We will have to receive \
+Here is containing the 'get_session' function, We will have receives \
 an integration of new data to the db.
 """
 import logging

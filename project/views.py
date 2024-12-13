@@ -1,11 +1,5 @@
 from flask import (request, jsonify, flash, Response)
-from typing import (Dict, Any)
-
-from flask_admin.contrib.sqla import ModelView
-
-
 from project.apps import app_ as app
-from project.models import get_session
 from project.transactions import Bank
 
 
