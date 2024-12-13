@@ -147,6 +147,7 @@ Env. Var.: PYTHONUNBUFFERED=1,  PYTHONTRACEMALLOC=1, PWDEBUG=1
 При запуске отрабатываются файлы `project/models.py` и `project/models_more`.
 
 ### Админ панель п.3
+Доступна по `/admin`.\
 Изначально, задумал делать frontend с использованием `webpack` и самописные \
 шаблоны от `flask`/`django` с использование `TypeScript`. \
 Пример `project/templates` & `project/static`. \
