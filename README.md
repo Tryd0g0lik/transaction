@@ -16,7 +16,8 @@
 
 ### Error
 К сожалению не удалось реалезовать :-( задачи с пометкой "необязательный" :( \ 
-2+ дня ушло на [поиск ядра ошибки](#теперь-об-ошибке), но не нашел. \
+2+ дня ушло на [поиск ядра ошибки](#теперь-об-ошибке), но не нашел. 
+
 Надеюсь вы укажите на ядро в независимости от принятого решения.
 
 ### База данных
@@ -124,8 +125,7 @@ celery -A project.celeries.celery_tasks.sta tus_transaction_task worker --loglev
 
 #### Для работы через PyCharm
 ```text
-Env. Var.: PYTHONUNBUFFERED=1,  PYTHONTRACEMALLOC=1, PWDEBUG=1,
-Parameters: pytest --maxfail=1 --tb=auto --console_output_style=classic
+Env. Var.: PYTHONUNBUFFERED=1,  PYTHONTRACEMALLOC=1, PWDEBUG=1
 ```
 ![pycharm](./img/pycharm.png)
 
