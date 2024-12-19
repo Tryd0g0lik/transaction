@@ -31,7 +31,7 @@ class Bank:
         status = False
         try:
             # Receives the user and calculates the commission
-            user = self.session(Users).query.filter_by(id=user_id).first()
+            user = self.session.query(Users).filter_by(id=user_id).first()
             if user:
                 commission = amount * user.commission_rate
                 # Transaction
@@ -61,7 +61,7 @@ class Bank:
     def cancels(self, transaction_id: int) -> bool:
         status = None
         try:
-            old_transaction = self.session(Transaction).query\
+            old_transaction = self.session.query(Transaction)\
                 .filter_by(transaction_id).first()
             if old_transaction and old_transaction == "ожидание":
                 old_transaction.status = \
@@ -77,7 +77,7 @@ class Bank:
         status = {"status": ""}
         try:
             transaction =\
-                self.session(Transaction).query.filter_by(transaction_id).first()
+                self.session.query(Transaction).filter_by(transaction_id).first()
             if transaction:
                 status["status"] =\
                     status["status"].join(str(transaction.status))
@@ -98,7 +98,7 @@ class Bank:
         
         try:
             panding_transaction = \
-                self.session(User_Transaction).query.filter_by(
+                self.session.query(User_Transaction).filter_by(
                     status='ожидание'
                     ).all()
             if len(panding_transaction) == 0:
@@ -113,7 +113,7 @@ class Bank:
             for user_transaction in panding_transaction:
                 if datetime.now() - user_transaction.created_at >\
                     timedelta(minutes=15):
-                    transaction = self.session(Transaction).query\
+                    transaction = self.session.query(Transaction)\
                         .filter_by(id=user_transaction.trasaction_id)
                     yield transaction
                     transaction.status = "истекла"

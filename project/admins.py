@@ -80,7 +80,7 @@ def admin_pannel():
         def user_loader(user_id):
             bank = Bank()
             session = bank.session
-            return session(Users).query.get(user_id)
+            return session.query(Users).get(user_id)
         
         return app_dict
     return wrapper
